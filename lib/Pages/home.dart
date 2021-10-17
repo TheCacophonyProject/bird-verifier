@@ -8,7 +8,7 @@ import 'package:bird_verifier/services/LocalStorageAccess.dart';
 import 'package:bird_verifier/services/predictions_database.dart';
 import 'package:bird_verifier/model/prediction.dart';
 import 'package:intl/intl.dart';
-// import 'package:bird_verifier/services/functions.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
