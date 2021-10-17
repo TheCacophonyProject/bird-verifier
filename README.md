@@ -15,6 +15,6 @@ The Bird Verifier app allows users to:
 
 1) Listen to just those 3 second windows,
 2) Press a button to indicate if they agree or otherwise with the model,
-3) Immediately uploads this feedback to The Cacophony server: this will provide valuable data for further improvements to the model.
+3) Immediately uploads this feedback to The Cacophony server - as a tag against the recording: this will provide valuable data for further improvements to the model.
 
 
