@@ -1,4 +1,4 @@
-# bird_verifier
+# Bird Verifier
 
 Verify bird calls and songs
 
