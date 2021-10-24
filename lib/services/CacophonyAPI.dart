@@ -211,6 +211,7 @@ class CacophonyAPI {
 
 
   static Future <Map> downloadRecordingsDataUsingOffset(int offset, int startAtRecordingId, Function setUserMessage) async {
+    // startAtRecordingId=971718;
     if (Functions.isDebugging){
       setUserMessage("5a");
     }
@@ -300,6 +301,11 @@ class CacophonyAPI {
             // Save into local database
              Prediction predictionToSave = new Prediction(recordingId: recordingId, species: species, begin_s: begin_s_dbl, end_s: end_s_dbl, liklihood: liklihood_dbl, type: type, recordingDateTime: recordingDateTime, deviceName: deviceName, deviceId: deviceId, downloadFileJWTToken: "abc");
             Prediction returnedPrediction = await PredictionsDatabase.instance.create(predictionToSave);
+            if (returnedPrediction == null){
+              print("couldn't save the prediction");
+            }else{
+              print("saved prediction");
+            }
 
           }
           setUserMessage("Downloaded $countOfDownloadedPredictions predictions");
@@ -371,7 +377,7 @@ class CacophonyAPI {
 
         countOfRowsDownloaded = returnValues['countOfRowsDownloaded'];
 
-        setUserMessage("Have downloaded $totalCountOfPredictions new predictions so far....");
+        setUserMessage("So far have checked $offset recordings, which contain $totalCountOfPredictions new predictions");
         if (countOfRowsDownloaded == 0){
           break;
         }
@@ -441,6 +447,10 @@ static Future <String> getDownloadFileJWTToken(String recordingId) async{
 }
 
   static Future <void> sendVerificationToCacophonyServer(Prediction verifiedPrediction) async {
+    if (!Functions.isSaveVerificationOnServer){
+      print("Saving tags disabled");
+      return;
+    }
     String what = verifiedPrediction.species;
     // what = "tag_verification_$what $verification";
     print(what);

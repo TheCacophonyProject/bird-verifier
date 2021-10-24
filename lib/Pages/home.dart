@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:bird_verifier/services/CacophonyAPI.dart';
 import 'dart:async';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:bird_verifier/services/AudioHelper.dart';
+// import 'package:bird_verifier/services/AudioHelper.dart';
 import 'package:bird_verifier/services/LocalStorageAccess.dart';
 import 'package:bird_verifier/services/predictions_database.dart';
 import 'package:bird_verifier/model/prediction.dart';
 import 'package:intl/intl.dart';
+import 'package:bird_verifier/Pages/Settings.dart';
+import 'package:bird_verifier/Pages/data.dart';
 
 
 class Home extends StatefulWidget {
@@ -31,19 +33,17 @@ class _HomeState extends State<Home> {
   String? userMessageCanYouHearA = "Can your hear a ? (Even in the background)";
 
 
-
-final passwordTextFieldController = TextEditingController(); // https://flutter.dev/docs/cookbook/forms/retrieve-input
+  final passwordTextFieldController = TextEditingController(); // https://flutter.dev/docs/cookbook/forms/retrieve-input
 
   AssetsAudioPlayer? assetsAudioPlayer;
 
 
-
-@override
-void dispose(){
-  // Clean up the controller when the widget is dispose
-  passwordTextFieldController.dispose();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is dispose
+    passwordTextFieldController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,153 +51,173 @@ void dispose(){
     ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
 
     return Scaffold(
+      appBar: AppBar( // https://www.youtube.com/watch?v=TczSxNJB1gU
+        title: Text('Bird Verifier - Cacophony'),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<int>(
+            onSelected: (item) => onSelected(context, item),
+            itemBuilder: (context) =>
+            [
+              PopupMenuItem<int>(
+                value: 0,
+                child: Text('Settings'),
+              ),
+              PopupMenuItem<int>(
+                value: 1,
+                child: Text('Data'),
+              ),
+            ],
+          ),
+        ],
+      ),
       backgroundColor: Colors.green,
       body: SafeArea(
 
         child: ListView(
-          children:<Widget>[
+            children: <Widget>[
 
-            ElevatedButton(
-              style: style,
-              onPressed: downloadRecordingsData,
-              child: const Text('Download new predictions'),
-            ),
+              ElevatedButton(
+                style: style,
+                onPressed: downloadRecordingsData,
+                child: const Text('Download new predictions'),
+              ),
 
-            Text(
-              '$userMessage',
-              textScaleFactor: 1.5,
-            ),
-
-
-            ElevatedButton(
-              style: style,
-              onPressed: playNextUnVerified,
-              child: const Text('Play (again)'),
-            ),
+              Text(
+                '$userMessage',
+                textScaleFactor: 1.5,
+              ),
 
 
+              ElevatedButton(
+                style: style,
+                onPressed: playNextUnVerified,
+                child: const Text('Play (again)'),
+              ),
 
+              Text(
+                '$userMessageCurrentRecordingIdAndStartPosition',
+              ),
+              Text(
+                '$userMessageCurrentRecordingDateTime',
+              ),
 
-            Text(
-              '$userMessageCurrentRecordingIdAndStartPosition',
-            ),
-            Text(
-              '$userMessageCurrentRecordingDateTime',
-            ),
-
-            Text(
+              Text(
                 '$userMessageCanYouHearA',
-              textScaleFactor: 1.4,
-            ),
+                textScaleFactor: 1.4,
+              ),
 
 
-            TextButton(
-                onPressed: () => verifyRecording("definitely"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("definitely"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Definitely')),
+                  child: const Text('Definitely')),
 
-            TextButton(
-                onPressed: () => verifyRecording("almost_certainly"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("almost_certainly"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Almost certainly')),
+                  child: const Text('Almost certainly')),
 
-            TextButton(
-                onPressed: () => verifyRecording("probably"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("probably"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Probably')),
+                  child: const Text('Probably')),
 
-            TextButton(
-                onPressed: () => verifyRecording("maybe"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("maybe"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Maybe')),
+                  child: const Text('Maybe')),
 
-            TextButton(
-                onPressed: () => verifyRecording("unknown"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("unknown"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Unknown')),
+                  child: const Text('Unknown')),
 
-            TextButton(
-                onPressed: () => verifyRecording("maybe_not"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("maybe_not"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Maybe NOT')),
+                  child: const Text('Maybe NOT')),
 
-            TextButton(
-                onPressed: () => verifyRecording("probably_not"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("probably_not"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Probably NOT')),
+                  child: const Text('Probably NOT')),
 
-            TextButton(
-                onPressed: () => verifyRecording("almost_certainly_not"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("almost_certainly_not"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Almost Certainly Not')),
+                  child: const Text('Almost Certainly Not')),
 
-            TextButton(
-                onPressed: () => verifyRecording("definitely_not"),
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
+              TextButton(
+                  onPressed: () => verifyRecording("definitely_not"),
+                  style: TextButton.styleFrom(
+                    primary: Colors.pink,
+                    textStyle: TextStyle(
+                      fontSize: 30,
+                    ),
                   ),
-                ),
-                child: const Text('Definitely NOT')),
+                  child: const Text('Definitely NOT')),
 
-
-
-            TextButton(
-                onPressed: resetCredentials,
-                style: TextButton.styleFrom(
-                  primary: Colors.pink,
-                  textStyle: TextStyle(
-                    fontSize: 30,
-                  ),
-                ),
-                child: const Text('Forget username and password')),
-
-]
+            ]
         ),
 
       ),
     );
+
+}
+
+void onSelected(BuildContext context, int item){
+  switch (item) {
+    case 0:
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => SettingsPage()),
+      );
+      break; case 1:
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => DataPage()),
+    );
+    break;
+  }
   }
 
   void downloadRecordingsData() async{
@@ -250,8 +270,6 @@ void dispose(){
 
 
 
-
-
   void locallyStoredPredictions() async {
 
     List<Prediction> allPredictions = await PredictionsDatabase.instance.readAllPredictions();
@@ -274,11 +292,6 @@ void dispose(){
   }
 
 
-
-  // verifyRecording(int certaintyFactor)  {
-  // print("lastRecordingId is $lastRecordingId");
-  //   Functions.verifyRecording(certaintyFactor);
-  // }
 
   verifyRecording(String verification)  {
     currentPrediction!.verification = verification;
@@ -388,12 +401,6 @@ void dispose(){
     }
 
   }
-
-  Future<void> resetCredentials() async {
-    LocalStorageAccess.saveCacophonyPassword("empty");
-    LocalStorageAccess.saveCacophonyUsername("empty");
-  }
-
 
 
 }

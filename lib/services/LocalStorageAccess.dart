@@ -3,29 +3,51 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:bird_verifier/services/AudioHelper.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:permission_handler/permission_handler.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:bird_verifier/services/Functions.dart';
+
 
 class LocalStorageAccess{
 
   static final storage = new FlutterSecureStorage(); // https://pub.dev/packages/flutter_secure_storage
-
-
-
   static var db;
+  static String recordingsFolder = "recordings";
 
 
+// static Future<String> getLocalRecordingsDirectory() async{
+//   final directory = await getApplicationDocumentsDirectory();
+//   String pathAsString = directory.path;
+//   pathAsString = pathAsString + '/$recordingsFolder/';
+//   print("pathAsString is $pathAsString");
+//
+//   return pathAsString;
+//
+// }
 
-
-  static Future<String> getLocalRecordingFilePathName(int recordingId) async {
-
+  static Future<Directory> getLocalRecordingsDirectory() async{
     final directory = await getApplicationDocumentsDirectory();
     String pathAsString = directory.path;
-    pathAsString = pathAsString + '/' + recordingId.toString() + '.m4a';
+    pathAsString = pathAsString + '/$recordingsFolder/';
+    var localRecordingsDirectory = Directory(pathAsString);
+    if (!localRecordingsDirectory.existsSync()){
+      localRecordingsDirectory.createSync();
+    }
+
+   return localRecordingsDirectory;
+
+  }
+
+  static Future<String> getLocalRecordingFilePathName(int recordingId) async {
+    final directory = await getLocalRecordingsDirectory();
+      String pathAsString = directory.path;
+  // pathAsString = pathAsString + '/$recordingsFolder/';
+//   print("pathAsString is $pathAsString");
+//
+//   return pathAsString;
+
+
+    // final directory = await getApplicationDocumentsDirectory();
+    // String pathAsString = directory.path;
+    // pathAsString = pathAsString + '/$recordingsFolder/' + recordingId.toString() + '.m4a';
+   pathAsString =  pathAsString + recordingId.toString() + '.m4a';
     print("pathAsString is $pathAsString");
 
     return pathAsString;
