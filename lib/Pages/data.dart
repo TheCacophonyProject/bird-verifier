@@ -1,16 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:bird_verifier/services/LocalStorageAccess.dart';
 import 'package:bird_verifier/services/predictions_database.dart';
 import 'package:bird_verifier/model/prediction.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'dart:io';
+import 'package:filesize/filesize.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
 
   @override
   _DataPageState createState() => _DataPageState();
-
 
 }
 
@@ -22,7 +24,8 @@ class _DataPageState extends State<DataPage> {
   String? userMessage = "";
 
   int numberOfRecordingsOnPhone = 0;
-  int diskSpaceUsedBySavedRecordings = 0;
+  // int diskSpaceUsedBySavedRecordings = 0;
+  String diskSpaceUsedBySavedRecordings = "0 MB";
 
 
   final passwordTextFieldController = TextEditingController(); // https://flutter.dev/docs/cookbook/forms/retrieve-input
@@ -62,11 +65,10 @@ class _DataPageState extends State<DataPage> {
         });
       }
 
-
       setState(() {
               numberOfRecordingsOnPhone = countRecordings;
-              diskSpaceUsedBySavedRecordings = totalSize~/100000.0;
-
+              // diskSpaceUsedBySavedRecordings = (totalSize~/1000000.0).ceil();
+              diskSpaceUsedBySavedRecordings = filesize(totalSize);
             });
 
     } catch (e) {
@@ -74,6 +76,8 @@ class _DataPageState extends State<DataPage> {
     }
 
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,23 +90,43 @@ class _DataPageState extends State<DataPage> {
         centerTitle: true,
 
       ),
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.lightGreen,
       body: SafeArea(
 
-        child: ListView(
-            children: <Widget>[
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+              children: <Widget>[
 
-              Text(
-                'Number of recordings on phone: $numberOfRecordingsOnPhone',
-                textScaleFactor: 1.5,
-              ),
+                Text(
+                  'Number of recordings on phone: $numberOfRecordingsOnPhone',
+                  textScaleFactor: 1.5,
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 20,
+                ),
 
-              Text(
-                'Disk space used by recordings on phone: $diskSpaceUsedBySavedRecordings MB',
-                textScaleFactor: 1.5,
-              ),
+                Text(
+                  'Disk space used by recordings on phone: $diskSpaceUsedBySavedRecordings',
+                  textScaleFactor: 1.5,
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                ElevatedButton(
+                  style: style,
+                  onPressed: deleteRecordingsFromPhone,
+                  child: const Text('Clear recordings from phone'),
+                ),
 
-            ]
+              ]
+          ),
         ),
 
       ),
@@ -111,7 +135,10 @@ class _DataPageState extends State<DataPage> {
   }
 
 
-
+  Future<void> deleteRecordingsFromPhone() async {
+    await LocalStorageAccess.deleteRecordingsFromPhone();
+    getDiskSpaceUsedBySavedRecordings();
+  }
 
 
   void setUserMessage(String message){

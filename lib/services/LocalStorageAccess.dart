@@ -11,17 +11,6 @@ class LocalStorageAccess{
   static var db;
   static String recordingsFolder = "recordings";
 
-
-// static Future<String> getLocalRecordingsDirectory() async{
-//   final directory = await getApplicationDocumentsDirectory();
-//   String pathAsString = directory.path;
-//   pathAsString = pathAsString + '/$recordingsFolder/';
-//   print("pathAsString is $pathAsString");
-//
-//   return pathAsString;
-//
-// }
-
   static Future<Directory> getLocalRecordingsDirectory() async{
     final directory = await getApplicationDocumentsDirectory();
     String pathAsString = directory.path;
@@ -30,33 +19,19 @@ class LocalStorageAccess{
     if (!localRecordingsDirectory.existsSync()){
       localRecordingsDirectory.createSync();
     }
-
    return localRecordingsDirectory;
-
   }
 
   static Future<String> getLocalRecordingFilePathName(int recordingId) async {
     final directory = await getLocalRecordingsDirectory();
       String pathAsString = directory.path;
-  // pathAsString = pathAsString + '/$recordingsFolder/';
-//   print("pathAsString is $pathAsString");
-//
-//   return pathAsString;
 
-
-    // final directory = await getApplicationDocumentsDirectory();
-    // String pathAsString = directory.path;
-    // pathAsString = pathAsString + '/$recordingsFolder/' + recordingId.toString() + '.m4a';
    pathAsString =  pathAsString + recordingId.toString() + '.m4a';
     print("pathAsString is $pathAsString");
 
     return pathAsString;
 
   }
-
-
-
-
 
 
   static Future<String> getCacophonyUserPassword() async {
@@ -100,6 +75,20 @@ class LocalStorageAccess{
     }
   }
 
+  static Future<void> setSendVerificationsToServer(String sendVerificationsToServer) async {
+    await storage.write(key: "sendVerificationsToServer", value: sendVerificationsToServer);
+  }
+
+  static Future<bool> getSendVerificationsToServer() async {
+    String? value = await storage.read(key: "sendVerificationsToServer");
+    if (value == null) {
+      return true;
+    } else {
+      bool sendVerificationsToServer = value.toLowerCase() == 'true';
+      return sendVerificationsToServer;
+    }
+  }
+
 
 
   static Future <void> saveRecordingResponse(int recordingId, var response) async {
@@ -119,8 +108,11 @@ class LocalStorageAccess{
 
     print("Saved $recordingId file");
 
+  }
 
-
+  static Future <void> deleteRecordingsFromPhone() async {
+    Directory directory = await getLocalRecordingsDirectory();
+    directory.delete(recursive: true);
   }
 
 

@@ -16,7 +16,7 @@ import 'dart:io';
 class Functions{
 
   static bool isDebugging = false;
-  static bool isSaveVerificationOnServer = false; // set to false when don't want to send tag to server
+  // static bool isSaveVerificationOnServer = false; // set to false when don't want to send tag to server
 
   static Future<Prediction?> getNextUnVerifiedPrediction(Function setUserMessage) async {
     Prediction? nextUnverifiedPrediction = await PredictionsDatabase.instance

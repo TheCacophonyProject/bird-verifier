@@ -447,10 +447,18 @@ static Future <String> getDownloadFileJWTToken(String recordingId) async{
 }
 
   static Future <void> sendVerificationToCacophonyServer(Prediction verifiedPrediction) async {
-    if (!Functions.isSaveVerificationOnServer){
-      print("Saving tags disabled");
+    // if (!Functions.isSaveVerificationOnServer){
+    //   print("Saving tags disabled");
+    //   return;
+    // }
+
+    bool sendVerificationsToServer = await LocalStorageAccess.getSendVerificationsToServer();
+
+    if (!sendVerificationsToServer){
       return;
     }
+
+
     String what = verifiedPrediction.species;
     // what = "tag_verification_$what $verification";
     print(what);
